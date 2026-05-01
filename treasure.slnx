@@ -1,0 +1,7 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="treasure/treasure.vcxproj" Id="771b7a27-947c-4535-bf8b-ce2ad9eb7de8" />
+</Solution>
