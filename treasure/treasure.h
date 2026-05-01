@@ -22,6 +22,9 @@ constexpr int ERR_INDEX{ 5002 };
 constexpr int ERR_PARAM{ 5003 };
 constexpr int ERR_UNK{ 5004 };
 
+constexpr int FIELD_ROWS{ 15 };
+constexpr int FIELD_COLS{ 19 };
+
 enum class dirs { up = 0, down = 1, left = 2, right = 3, stop = 4 };
 
 enum class nature { tree1 = 0, tree2 = 1, tree3 = 2, mountain1 = 3, mountain2 = 3 };
@@ -455,7 +458,18 @@ namespace dll
 		D2D1_RECT_F get_rect()const;
 	};
 
+	class TREASURE_API FIELD
+	{
+	private:
+		TILE FieldArray[FIELD_ROWS][FIELD_COLS]{};
 
+	public:
+		FIELD(float _where_x, float _where_y);
+
+		D2D1_RECT_F get_tile_rect(int row, int col)const;
+	
+		bool is_water_tile(int row, int col)const;
+	};
 
 
 

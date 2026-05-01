@@ -197,3 +197,58 @@ D2D1_RECT_F dll::PROTON::get_rect()const
 }
 
 ///////////////////////////////////////////
+
+// FIELD class ****************************
+
+dll::FIELD::FIELD(float _where_x, float _where_y)
+{
+	RANDIT _rand{};
+
+	float tx = 0;
+	float ty = 50.0f;
+
+	for (int row = 0; row < FIELD_ROWS; ++row)
+	{
+		for (int col = 0; col < FIELD_COLS; ++col)
+		{
+			FieldArray[row][col].rect.left = tx;
+			FieldArray[row][col].rect.right = tx + 50.0f;
+			FieldArray[row][col].rect.top = ty;
+			FieldArray[row][col].rect.bottom = ty + 50.0f;
+
+			tx += 50.0f;
+		}
+
+		tx = 0;
+		ty += 50.0f;
+	}
+
+	for (int row = 0; row < FIELD_ROWS - 2; ++row)
+	{
+		for (int col = 0; col < FIELD_COLS - 3; ++col)
+		{
+			if (_rand(0, 5) == 2)
+			{
+				FieldArray[row][col].is_water = true;
+				FieldArray[row][col + 1].is_water = true;
+				FieldArray[row][col + 2].is_water = true;
+
+				FieldArray[row + 1][col].is_water = true;
+				FieldArray[row + 1][col + 1].is_water = true;
+				FieldArray[row + 1][col + 2].is_water = true;
+			}
+		}
+	}
+}
+
+D2D1_RECT_F dll::FIELD::get_tile_rect(int row, int col)const
+{
+	return FieldArray[row][col].rect;
+}
+
+bool dll::FIELD::is_water_tile(int row, int col)const
+{
+	return FieldArray[row][col].is_water;
+}
+
+///////////////////////////////////////////
