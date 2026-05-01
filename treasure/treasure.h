@@ -27,7 +27,7 @@ constexpr int FIELD_COLS{ 19 };
 
 enum class dirs { up = 0, down = 1, left = 2, right = 3, stop = 4 };
 
-enum class nature { tree1 = 0, tree2 = 1, tree3 = 2, mountain1 = 3, mountain2 = 3 };
+enum class nature { tree1 = 0, tree2 = 1, tree3 = 2, mountain1 = 3, mountain2 = 4 };
 enum class evils { soul = 0, flyer = 1, zombie = 2, girl = 3 };
 enum class assets { gold = 0, life = 1, gun = 2, armor = 3, map = 4 };
 
@@ -428,7 +428,7 @@ namespace dll
 
 	class TREASURE_API PROTON
 	{
-	private:
+	protected:
 		float _width{ 0 };
 		float _height{ 0 };
 
@@ -471,7 +471,21 @@ namespace dll
 		bool is_water_tile(int row, int col)const;
 	};
 
+	class TREASURE_API NATURE :public PROTON
+	{
+	private:
 
+		NATURE(nature _what, float _sx_, float _sy_);
+
+	public:
+		nature type;
+
+		D2D1_RECT_F get_rect()const;
+
+		void Release();
+
+		static NATURE* create(nature what, float sx_, float sy_);
+	};
 
 
 

@@ -252,3 +252,54 @@ bool dll::FIELD::is_water_tile(int row, int col)const
 }
 
 ///////////////////////////////////////////
+
+// NATURE class ***************************
+
+dll::NATURE::NATURE(nature _what, float _sx_, float _sy_) :PROTON(_sx_, _sy_)
+{
+	type = _what;
+
+	switch (type)
+	{
+	case nature::tree1:
+		new_dims(90.0f, 90.0f);
+		break;
+
+	case nature::tree2:
+		new_dims(90.0f, 90.0f);
+		break;
+
+	case nature::tree3:
+		new_dims(90.0f, 90.0f);
+		break;
+
+	case nature::mountain1:
+		new_dims(200.0f, 134.0f);
+		break;
+
+	case nature::mountain2:
+		new_dims(250.0f, 112.0f);
+		break;
+	}
+}
+
+D2D1_RECT_F dll::NATURE::get_rect()const
+{
+	return _my_rect;
+}
+
+void dll::NATURE::Release()
+{
+	delete this;
+}
+
+dll::NATURE* dll::NATURE::create(nature what, float sx_, float sy_)
+{
+	NATURE* ret{ nullptr };
+
+	ret = new NATURE(what, sx_, sy_);
+	
+	return ret;
+}
+
+///////////////////////////////////////////
