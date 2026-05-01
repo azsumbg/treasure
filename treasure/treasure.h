@@ -423,7 +423,37 @@ namespace dll
 
 	};
 
+	class TREASURE_API PROTON
+	{
+	private:
+		float _width{ 0 };
+		float _height{ 0 };
 
+		D2D1_RECT_F _my_rect{};
+
+	public:
+		FPOINT start{};
+		FPOINT end{};
+		FPOINT center{};
+		float x_rad{ 0 };
+		float y_rad{ 0 };
+
+		PROTON();
+		PROTON(float _sx, float _sy);
+		PROTON(float _sx, float _sy, float _first_width, float _first_height);
+		
+		virtual ~PROTON() {};
+
+		void set_edges();
+		void new_dims(float _new_width, float _new_height);
+
+		void set_width(float _new_width);
+		void set_height(float _new_height);
+
+		float get_width()const;
+		float get_height()const;
+		D2D1_RECT_F get_rect()const;
+	};
 
 
 
