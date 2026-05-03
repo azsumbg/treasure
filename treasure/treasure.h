@@ -489,7 +489,14 @@ namespace dll
 
 
 
+	// FUNCTIONS *******************************
 
+	TREASURE_API float Distance(FPOINT first, FPOINT second);
+
+	TREASURE_API bool Intersect(D2D1_RECT_F first, D2D1_RECT_F second);
+	TREASURE_API bool Intersect(FPOINT first_center, FPOINT second_center, float first_xrad, float second_xrad,
+		float first_yrad, float second_yrad);
+	TREASURE_API void Sort(BAG<FPOINT>& bag, FPOINT ref);
 
 }
 

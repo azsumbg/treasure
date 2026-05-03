@@ -303,3 +303,73 @@ dll::NATURE* dll::NATURE::create(nature what, float sx_, float sy_)
 }
 
 ///////////////////////////////////////////
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// FUNCTIONS *******************************
+
+float dll::Distance(FPOINT first, FPOINT second)
+{
+	float a = (float)(pow(abs(second.x - first.x), 2.0f));
+	float b = (float)(pow(abs(second.y - first.y), 2.0f));
+
+	return (float)(sqrt(a + b));
+}
+bool dll::Intersect(D2D1_RECT_F first, D2D1_RECT_F second)
+{
+	if (!(first.left >= second.right || first.right <= second.left || first.top >= second.bottom || first.bottom <= second.top))
+		return true;
+	
+	return false;
+}
+bool dll::Intersect(FPOINT first_center, FPOINT second_center, float first_xrad, float second_xrad,
+	float first_yrad, float second_yrad)
+{
+	if (Distance(first_center, second_center) <= first_xrad + second_xrad
+		&& Distance(first_center, second_center) <= first_yrad + second_yrad)return true;
+
+	return false;
+}
+void dll::Sort(BAG<FPOINT>& bag, FPOINT ref)
+{
+	if (bag.size() < 2)return;
+	else
+	{
+		bool ok = false;
+
+		while (!ok)
+		{
+			ok = true;
+
+			for (size_t i = 0; i < bag.size() - 1; ++i)
+			{
+				if (Distance(bag[i], ref) > Distance(bag[i + 1], ref))
+				{
+					FPOINT temp{ bag[i] };
+					bag[i] = bag[i + 1];
+					bag[i + 1] = temp;
+					ok = false;
+				}
+			}
+		}
+	}
+}
