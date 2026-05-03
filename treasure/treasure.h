@@ -534,8 +534,22 @@ namespace dll
 		virtual void Release() = 0;
 	};
 
-	// class EVILS *****************************
+	class TREASURE_API SHOT :public ACTION
+	{
+	private:
 
+		SHOT(float _sx, float _sy, float _ex, float _ey, int _power);
+
+	public:
+
+		int get_frame() override;
+		int attack() override;
+
+		void Release() override;
+
+		static SHOT* create(float sx, float sy, float ex, float ey, int power);
+	};
+	
 	class TREASURE_API EVIL :public ACTION
 	{
 	private:
@@ -550,16 +564,8 @@ namespace dll
 
 		void Release() override;
 
-		static EVIL* create(moveables _who, float _sx, float _sy, float _ex, float _ey);
+		static EVIL* create(moveables who, float sx, float sy, float ex, float ey);
 	};
-
-
-
-
-	/////////////////////////////////////////////
-
-
-
 
 
 

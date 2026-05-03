@@ -466,6 +466,39 @@ bool dll::ACTION::move(float gear)
 
 ///////////////////////////////////////////
 
+// SHOT class *****************************
+
+dll::SHOT::SHOT(float _sx, float _sy, float _ex, float _ey, int _power) :ACTION(moveables::shot, _sx, _sy)
+{
+	damage = _power;
+
+	set_path(_ex, _ey);
+}
+int dll::SHOT::get_frame()
+{
+	return 0;
+}
+int dll::SHOT::attack()
+{
+	return damage;
+}
+
+void dll::SHOT::Release()
+{
+	delete this;
+}
+
+dll::SHOT* dll::SHOT::create(float sx, float sy, float ex, float ey, int power)
+{
+	SHOT* ret{ nullptr };
+	
+	ret = new SHOT(sx, sy, ex, ey, power);
+
+	return ret;
+}
+
+//////////////////////////////////////////
+
 // EVIL class *****************************
 
 dll::EVIL::EVIL(moveables _who, float _sx, float _sy, float _ex, float _ey) :ACTION(_who, _sx, _sy)
@@ -502,6 +535,15 @@ int dll::EVIL::attack()
 void dll::EVIL::Release()
 {
 	delete this;
+}
+
+dll::EVIL* dll::EVIL::create(moveables who, float sx, float sy, float ex, float ey)
+{
+	EVIL* ret{ nullptr };
+
+	ret = new EVIL(who, sx, sy, ex, ey);
+
+	return ret;
 }
 
 ////////////////////////////////////////////
