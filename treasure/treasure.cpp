@@ -304,16 +304,207 @@ dll::NATURE* dll::NATURE::create(nature what, float sx_, float sy_)
 
 ///////////////////////////////////////////
 
+// ACTION class ***************************
 
+dll::ACTION::ACTION(moveables _who, float _x, float _y) :PROTON(_x, _y)
+{
+	type = _who;
 
+	switch (type)
+	{
+	case moveables::shot:
+		new_dims(11.0f, 11.0f);
+		_speed = 5.0f;
+		break;
 
+	case moveables::flyer:
+		new_dims(41.0f, 65.0f);
+		_speed = 1.1f;
+		max_frames = 10;
+		frame_delay = 6;
+		damage = 5;
+		max_attack_delay = 80;
+		lifes = 100;
+		break;
 
+	case moveables::girl:
+		new_dims(48.0f, 65.0f);
+		_speed = 0.8f;
+		max_frames = 25;
+		frame_delay = 3;
+		damage = 9;
+		max_attack_delay = 100;
+		lifes = 110;
+		break;
 
+	case moveables::soul:
+		new_dims(28.0f, 50.0f);
+		_speed = 1.0f;
+		max_frames = 119;
+		frame_delay = 1;
+		damage = 6;
+		max_attack_delay = 105;
+		lifes = 90;
+		break;
 
+	case moveables::zombie:
+		new_dims(64.0f, 75.0f);
+		_speed = 0.4f;
+		max_frames = 3;
+		frame_delay = 22;
+		damage = 10;
+		max_attack_delay = 120;
+		lifes = 150;
+		break;
 
+	case moveables::hero:
+		new_dims(80.0f, 80.0f);
+		_speed = 1.5f;
+		max_frames = 31;
+		frame_delay = 2;
+		damage = 20;
+		lifes = 150;
+		break;
+	}
 
+	max_attack_delay = attack_delay;
+	max_frame_delay = frame_delay;
+}
 
+void dll::ACTION::set_path(float target_x, float target_y)
+{
+	ver_dir = false;
+	hor_dir = false;
 
+	move_sx = start.x;
+	move_sy = start.y;
+
+	move_ex = target_x;
+	move_ey = target_y;
+
+	if (move_sx == move_ex || (move_ex > move_sx && move_ex <= end.x))
+	{
+		ver_dir = true;
+		return;
+	}
+	if (move_sy == move_ey || (move_ey > move_sy && move_ey <= end.y))
+	{
+		hor_dir = true;
+		return;
+	}
+
+	slope = (move_ey - move_sy) / (move_ex - move_sx);
+	intercept = start.y - slope * start.x;
+}
+
+float dll::ACTION::get_target_x() const
+{
+	return move_ex;
+}
+float dll::ACTION::get_target_y() const
+{
+	return move_ey;
+}
+
+bool dll::ACTION::move(float gear)
+{
+	float my_speed = _speed + gear / 10.0f;
+
+	if (hor_dir)
+	{
+		if (move_ex < move_sx)
+		{
+			start.x -= my_speed;
+			set_edges();
+			if (end.x <= 0)return false;
+		}
+		else if (move_ex > move_sx)
+		{
+			start.x += my_speed;
+			set_edges();
+			if (start.x >= scr_width)return false;
+		}
+		else return false;
+	}
+	else if (ver_dir)
+	{
+		if (move_ey < move_sy)
+		{
+			start.y -= my_speed;
+			set_edges();
+			if (end.y <= sky)return false;
+		}
+		else if (move_ey > move_sy)
+		{
+			start.y += my_speed;
+			set_edges();
+			if (start.y >= ground)return false;
+		}
+		else return false;
+	}
+	else
+	{
+		if (move_ex < move_sx)
+		{
+			start.x -= my_speed;
+			start.y = start.x * slope + intercept;
+			set_edges();
+			if (end.x <= 0 || start.x >= scr_width || end.y <= sky || start.y >= ground)return false;
+		}
+		else if (move_ex > move_sx)
+		{
+			start.x += my_speed;
+			start.y = start.x * slope + intercept;
+			set_edges();
+			if (end.x <= 0 || start.x >= scr_width || end.y <= sky || start.y >= ground)return false;
+		}
+		else return false;
+	}
+
+	return true;
+}
+
+///////////////////////////////////////////
+
+// EVIL class *****************************
+
+dll::EVIL::EVIL(moveables _who, float _sx, float _sy, float _ex, float _ey) :ACTION(_who, _sx, _sy)
+{
+	set_path(_ex, _ey);
+
+	if (move_ex > move_sx)dir = dirs::right;
+	else dir = dirs::left;
+}
+
+int dll::EVIL::get_frame()
+{
+	--frame_delay;
+	if (frame_delay <= 0)
+	{
+		frame_delay = max_frame_delay;
+		++frame;
+		if (frame > max_frames)frame = 0;
+	}
+
+	return frame;
+}
+int dll::EVIL::attack()
+{
+	--attack_delay;
+	if (attack_delay <= 0)
+	{
+		attack_delay = max_attack_delay;
+		return damage;
+	}
+
+	return 0;
+}
+void dll::EVIL::Release()
+{
+	delete this;
+}
+
+////////////////////////////////////////////
 
 
 

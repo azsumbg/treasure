@@ -28,8 +28,10 @@ constexpr int FIELD_COLS{ 19 };
 enum class dirs { up = 0, down = 1, left = 2, right = 3, stop = 4 };
 
 enum class nature { tree1 = 0, tree2 = 1, tree3 = 2, mountain1 = 3, mountain2 = 4 };
-enum class evils { soul = 0, flyer = 1, zombie = 2, girl = 3 };
+enum class moveables { soul = 0, flyer = 1, zombie = 2, girl = 3, hero = 4, shot = 5 };
 enum class assets { gold = 0, life = 1, gun = 2, armor = 3, map = 4 };
+enum class hero_action { stand = 0, walk = 1, shoot = 2 };
+
 
 struct TREASURE_API FPOINT
 {
@@ -486,6 +488,79 @@ namespace dll
 
 		static NATURE* create(nature what, float sx_, float sy_);
 	};
+
+	class TREASURE_API ACTION :public PROTON
+	{
+	protected:
+		float _speed = 1.0f;
+
+		bool ver_dir = false;
+		bool hor_dir = false;
+
+		float move_sx = 0;
+		float move_ex = 0;
+		float move_sy = 0;
+		float move_ey = 0;
+
+		float slope = 0;
+		float intercept = 0;
+
+		int frame = 0;
+		int max_frames = 0;
+		int frame_delay = 0;
+		int max_frame_delay = 0;
+
+		int attack_delay = 0;
+		int max_attack_delay = 0;
+
+	public:
+		moveables type;
+		int lifes = 0;
+		int damage = 0;
+		
+		ACTION(moveables _who, float _x, float _y);
+		virtual ~ACTION() {};
+
+		void set_path(float target_x, float target_y);
+
+		float get_target_x() const;
+		float get_target_y() const;
+
+		virtual int get_frame() = 0;
+		virtual int attack() = 0;
+
+		virtual bool move(float gear);
+
+		virtual void Release() = 0;
+	};
+
+	// class EVILS *****************************
+
+	class TREASURE_API EVIL :public ACTION
+	{
+	private:
+
+		EVIL(moveables _who, float _sx, float _sy, float _ex, float _ey);
+
+	public:
+		dirs dir = dirs::stop;
+
+		int get_frame() override;
+		int attack() override;
+
+		void Release() override;
+
+		static EVIL* create(moveables _who, float _sx, float _sy, float _ex, float _ey);
+	};
+
+
+
+
+	/////////////////////////////////////////////
+
+
+
+
 
 
 
