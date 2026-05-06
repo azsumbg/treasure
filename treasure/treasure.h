@@ -30,7 +30,7 @@ enum class dirs { up = 0, down = 1, left = 2, right = 3, stop = 4 };
 enum class nature { tree1 = 0, tree2 = 1, tree3 = 2, mountain1 = 3, mountain2 = 4 };
 enum class moveables { soul = 0, flyer = 1, zombie = 2, girl = 3, hero = 4, shot = 5 };
 enum class assets { gold = 0, life = 1, gun = 2, armor = 3, map = 4 };
-enum class action { stand = 0, walk = 1, shoot = 2 };
+enum class action { stand = 0, walk = 1, shoot = 2, bumped = 3 };
 
 struct TREASURE_API FPOINT
 {

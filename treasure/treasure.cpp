@@ -677,7 +677,80 @@ action dll::AIMove(EVIL& unit, BAG<D2D1_RECT_F>& obstacles, BAG<FPOINT>& assets,
 
 	if (!obstacles.empty())
 	{
+		char up{ 0b00000001 };
+		char down{ 0b00000010 };
+		char left{ 0b00000100 };
+		char right{ 0b00001000 };
+
+		char up_left{ 0b00000101 };
+		char down_left{ 0b00000110 };
+		char up_right{ 0b00001001 };
+		char down_right{ 0b00001010 };
+
+		char is_bumped{ 0 };
+
+		float dest_x{ unit.get_target_x() };
+		float dest_y{ unit.get_target_y() };
+
+		if (ret == action::bumped)ret = action::walk;
+
+		for (size_t i = 0; i < obstacles.size(); ++i)
+		{
+			if (Intersect(obstacles[i], unit._my_rect))
+			{
+				// UP / DOWN BUMP
+				if (unit.start.x >= obstacles[i].left && unit.start.x <= obstacles[i].right
+					&& unit.end.x >= obstacles[i].left && unit.end.x <= obstacles[i].right)
+				{
+					if (unit.end.y <= obstacles[i].top)is_bumped = up;
+					else is_bumped = down;
+				}
+				//LEFT / RIGHT BUMP
+				else if (unit.start.x >= obstacles[i].left && unit.start.x <= obstacles[i].right)
+				{
+					
+					if (unit.start.y >= obstacles[i].top && unit.start.y < obstacles[i].bottom &&
+						unit.end.y > obstacles[i].top && unit.end.y <= obstacles[i].bottom)is_bumped = left;
+					else
+					{
+						is_bumped |= left;
+						if (unit.start.y >= obstacles[i].top && unit.start.y <= obstacles[i].bottom)is_bumped |= up;
+						else if (unit.end.y > obstacles[i].top && unit.end.y <= obstacles[i].bottom)is_bumped |= down;
+					}
+				}
+				else if (unit.end.x >= obstacles[i].left && unit.end.x <= obstacles[i].right)
+				{
+
+					if (unit.start.y >= obstacles[i].top && unit.start.y < obstacles[i].bottom &&
+						unit.end.y > obstacles[i].top && unit.end.y <= obstacles[i].bottom)is_bumped = right;
+					else
+					{
+						is_bumped |= right;
+						if (unit.start.y >= obstacles[i].top && unit.start.y <= obstacles[i].bottom)is_bumped |= up;
+						else if (unit.end.y > obstacles[i].top && unit.end.y <= obstacles[i].bottom)is_bumped |= down;
+					}
+				}
+
+				unit.current_action = action::bumped;
+				break;
+			}
+		}
+
+		if (ret == action::bumped)
+		{
+			if (is_bumped == up_left)unit.set_path(unit.end.x - unit.get_width(), ground);
+			
+		}
 
 	}
 	
+	if (ret != action::bumped)
+	{
+
+	}
+
+
+	unit.current_action = ret;
+
+	return ret;
 }
