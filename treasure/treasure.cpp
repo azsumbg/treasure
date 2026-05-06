@@ -548,14 +548,76 @@ dll::EVIL* dll::EVIL::create(moveables who, float sx, float sy, float ex, float 
 
 ////////////////////////////////////////////
 
+// HERO class ******************************
 
+dll::HERO::HERO(float _sx, float _sy) :ACTION(moveables::hero, _sx, _sy) {};
 
+int dll::HERO::get_frame()
+{
+	--frame_delay;
+	if (frame_delay <= 0)
+	{
+		frame_delay = max_frame_delay;
+		++frame;
+		if (frame > max_frames)frame = 0;
+	}
 
+	return frame;
+}
+int dll::HERO::attack()
+{
+	return damage;
+}
 
+action dll::HERO::get_action()const
+{
+	return current_action;
+}
+void dll::HERO::set_action(action new_action)
+{
+	current_action = new_action;
 
+	frame = 0;
 
+	switch (current_action)
+	{
+	case action::stand:
+		new_dims(80.0f, 80.0f);
+		max_frames = 31;
+		frame_delay = 2;
+		break;
 
+	case action::shoot:
+		new_dims(81.0f, 80.0f);
+		max_frames = 49;
+		frame_delay = 1;
+		break;
 
+	case action::walk:
+		new_dims(80.0f, 77.0f);
+		max_frames = 15;
+		frame_delay = 4;
+		break;
+	}
+
+	max_frame_delay = frame_delay;
+}
+
+void dll::HERO::Release()
+{
+	delete this;
+}
+
+dll::HERO* dll::HERO::create(float sx, float sy)
+{
+	HERO* ret{ nullptr };
+	
+	ret = new HERO(sx, sy);
+
+	return ret;
+}
+
+////////////////////////////////////////////
 
 
 // FUNCTIONS *******************************
@@ -605,4 +667,17 @@ void dll::Sort(BAG<FPOINT>& bag, FPOINT ref)
 			}
 		}
 	}
+}
+
+action dll::AIMove(EVIL& unit, BAG<D2D1_RECT_F>& obstacles, BAG<FPOINT>& assets, FPOINT hero_center)
+{
+	action ret = unit.current_action;
+	
+	if (!assets.empty())Sort(assets, unit.center);
+
+	if (!obstacles.empty())
+	{
+
+	}
+	
 }

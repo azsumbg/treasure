@@ -30,8 +30,7 @@ enum class dirs { up = 0, down = 1, left = 2, right = 3, stop = 4 };
 enum class nature { tree1 = 0, tree2 = 1, tree3 = 2, mountain1 = 3, mountain2 = 4 };
 enum class moveables { soul = 0, flyer = 1, zombie = 2, girl = 3, hero = 4, shot = 5 };
 enum class assets { gold = 0, life = 1, gun = 2, armor = 3, map = 4 };
-enum class hero_action { stand = 0, walk = 1, shoot = 2 };
-
+enum class action { stand = 0, walk = 1, shoot = 2 };
 
 struct TREASURE_API FPOINT
 {
@@ -557,6 +556,7 @@ namespace dll
 		EVIL(moveables _who, float _sx, float _sy, float _ex, float _ey);
 
 	public:
+		action current_action{ action::walk };
 		dirs dir = dirs::stop;
 
 		int get_frame() override;
@@ -565,10 +565,32 @@ namespace dll
 		void Release() override;
 
 		static EVIL* create(moveables who, float sx, float sy, float ex, float ey);
+	
+		friend TREASURE_API action AIMove(EVIL& unit, BAG<D2D1_RECT_F>& obstacles, BAG<FPOINT>& assets, FPOINT hero_center);
 	};
 
+	class TREASURE_API HERO :public ACTION
+	{
+	private:
+		action current_action{ action::stand };
 
+		HERO(float _sx, float _sy);
 
+	public:
+		dirs dir{ dirs::stop };
+
+		int lifes{ 200 };
+		int damage{ 20 };
+		int armor{ 1 };
+
+		int get_frame() override;
+		int attack() override;
+		action get_action()const;
+		void set_action(action new_action);
+		void Release()override;
+
+		static HERO* create(float sx, float sy);
+	};
 
 	// FUNCTIONS *******************************
 
@@ -579,5 +601,6 @@ namespace dll
 		float first_yrad, float second_yrad);
 	TREASURE_API void Sort(BAG<FPOINT>& bag, FPOINT ref);
 
+	TREASURE_API action AIMove(EVIL& unit, BAG<D2D1_RECT_F>& obstacles, BAG<FPOINT>& assets, FPOINT hero_center);
 }
 
