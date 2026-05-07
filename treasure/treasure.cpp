@@ -738,10 +738,11 @@ action dll::AIMove(EVIL& unit, BAG<D2D1_RECT_F>& obstacles, BAG<FPOINT>& assets,
 
 		if (ret == action::bumped)
 		{
-			if (is_bumped == up_left)unit.set_path(unit.end.x - unit.get_width(), ground);
-			
+			if (is_bumped == up_left || is_bumped == up_right)unit.set_path(dest_x, ground);
+			else if (is_bumped == down_left || is_bumped == down_right)unit.set_path(dest_x, sky);
+			else if (is_bumped == left || is_bumped == right)unit.set_path(unit.center.x, dest_y);
+			else if (is_bumped == up || is_bumped == down)unit.set_path(dest_x, unit.center.y);
 		}
-
 	}
 	
 	if (ret != action::bumped)
