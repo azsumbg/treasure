@@ -505,6 +505,25 @@ dll::EVIL::EVIL(moveables _who, float _sx, float _sy, float _ex, float _ey) :ACT
 {
 	set_path(_ex, _ey);
 
+	switch (_who)
+	{
+	case moveables::flyer:
+		view_range = 250.0f;
+		break;
+
+	case moveables::girl:
+		view_range = 150.0f;
+		break;
+
+	case moveables::soul:
+		view_range = 200.0f;
+		break;
+
+	case moveables::zombie:
+		view_range = 180.0f;
+		break;
+	}
+
 	if (move_ex > move_sx)dir = dirs::right;
 	else dir = dirs::left;
 }
@@ -747,9 +766,21 @@ action dll::AIMove(EVIL& unit, BAG<D2D1_RECT_F>& obstacles, BAG<FPOINT>& assets,
 	
 	if (ret != action::bumped)
 	{
-
+		if (Intersect(unit.center, hero_center, unit.x_rad, 40.0f, unit.y_rad, 40.0f))ret = action::shoot;
+		else if (Distance(unit.center, hero_center) <= unit.view_range)
+		{
+			unit.set_path(hero_center.x, hero_center.y);
+			ret = action::walk;
+		}
+		else if (!assets.empty())
+		{
+			if (Distance(unit.center, assets[0]) <= unit.view_range)
+			{
+				unit.set_path(assets[0].x, assets[0].y);
+				ret = action::walk;
+			}
+		}
 	}
-
 
 	unit.current_action = ret;
 

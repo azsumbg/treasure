@@ -553,6 +553,8 @@ namespace dll
 	{
 	private:
 
+		float view_range{ 0 };
+
 		EVIL(moveables _who, float _sx, float _sy, float _ex, float _ey);
 
 	public:
