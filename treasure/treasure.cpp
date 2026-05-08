@@ -200,7 +200,7 @@ D2D1_RECT_F dll::PROTON::get_rect()const
 
 // FIELD class ****************************
 
-dll::FIELD::FIELD(float _where_x, float _where_y)
+dll::FIELD::FIELD()
 {
 	RANDIT _rand{};
 
@@ -409,6 +409,9 @@ float dll::ACTION::get_target_y() const
 bool dll::ACTION::move(float gear)
 {
 	float my_speed = _speed + gear / 10.0f;
+
+	if (get_target_x() < center.x)dir = dirs::left;
+	else dir = dirs::right;
 
 	if (hor_dir)
 	{
@@ -780,6 +783,7 @@ action dll::AIMove(EVIL& unit, BAG<D2D1_RECT_F>& obstacles, BAG<FPOINT>& assets,
 				ret = action::walk;
 			}
 		}
+		else ret = action::patrol;
 	}
 
 	unit.current_action = ret;

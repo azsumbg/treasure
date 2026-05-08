@@ -30,7 +30,7 @@ enum class dirs { up = 0, down = 1, left = 2, right = 3, stop = 4 };
 enum class nature { tree1 = 0, tree2 = 1, tree3 = 2, mountain1 = 3, mountain2 = 4 };
 enum class moveables { soul = 0, flyer = 1, zombie = 2, girl = 3, hero = 4, shot = 5 };
 enum class assets { gold = 0, life = 1, gun = 2, armor = 3, map = 4 };
-enum class action { stand = 0, walk = 1, shoot = 2, bumped = 3 };
+enum class action { stand = 0, walk = 1, shoot = 2, bumped = 3, patrol = 4 };
 
 struct TREASURE_API FPOINT
 {
@@ -86,6 +86,7 @@ namespace dll
 	private:
 		int _what_happened = 0;
 
+	public:
 		EXCEPTION(int what_happened);
 
 		const wchar_t* getErr()const;
@@ -465,7 +466,7 @@ namespace dll
 		TILE FieldArray[FIELD_ROWS][FIELD_COLS]{};
 
 	public:
-		FIELD(float _where_x, float _where_y);
+		FIELD();
 
 		D2D1_RECT_F get_tile_rect(int row, int col)const;
 	
@@ -513,6 +514,7 @@ namespace dll
 		int max_attack_delay = 0;
 
 	public:
+		dirs dir = dirs::stop;
 		moveables type;
 		int lifes = 0;
 		int damage = 0;
@@ -559,8 +561,7 @@ namespace dll
 
 	public:
 		action current_action{ action::walk };
-		dirs dir = dirs::stop;
-
+		
 		int get_frame() override;
 		int attack() override;
 
@@ -579,8 +580,7 @@ namespace dll
 		HERO(float _sx, float _sy);
 
 	public:
-		dirs dir{ dirs::stop };
-
+	
 		int lifes{ 200 };
 		int damage{ 20 };
 		int armor{ 1 };
@@ -605,4 +605,3 @@ namespace dll
 
 	TREASURE_API action AIMove(EVIL& unit, BAG<D2D1_RECT_F>& obstacles, BAG<FPOINT>& assets, FPOINT hero_center);
 }
-
