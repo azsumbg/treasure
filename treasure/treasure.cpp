@@ -227,7 +227,7 @@ dll::FIELD::FIELD()
 	{
 		for (int col = 0; col < FIELD_COLS - 3; ++col)
 		{
-			if (_rand(0, 5) == 2)
+			if (_rand(0, 90) == 2)
 			{
 				FieldArray[row][col].is_water = true;
 				FieldArray[row][col + 1].is_water = true;
@@ -262,15 +262,15 @@ dll::NATURE::NATURE(nature _what, float _sx_, float _sy_) :PROTON(_sx_, _sy_)
 	switch (type)
 	{
 	case nature::tree1:
-		new_dims(90.0f, 90.0f);
+		new_dims(50.0f, 50.0f);
 		break;
 
 	case nature::tree2:
-		new_dims(90.0f, 90.0f);
+		new_dims(50.0f, 50.0f);
 		break;
 
 	case nature::tree3:
-		new_dims(90.0f, 90.0f);
+		new_dims(50.0f, 50.0f);
 		break;
 
 	case nature::mountain1:
@@ -623,6 +623,67 @@ void dll::HERO::set_action(action new_action)
 	}
 
 	max_frame_delay = frame_delay;
+}
+
+bool dll::HERO::move(float gear)
+{
+	float my_speed = _speed + gear / 10.0f;
+
+	if (get_target_x() < center.x)dir = dirs::left;
+	else dir = dirs::right;
+
+	if (hor_dir)
+	{
+		if (move_ex < move_sx)
+		{
+			start.x -= my_speed;
+			set_edges();
+			if (end.x <= 0 || center.x < move_ex)return false;
+		}
+		else if (move_ex > move_sx)
+		{
+			start.x += my_speed;
+			set_edges();
+			if (start.x >= scr_width || center.x > move_ex)return false;
+		}
+		else return false;
+	}
+	else if (ver_dir)
+	{
+		if (move_ey < move_sy)
+		{
+			start.y -= my_speed;
+			set_edges();
+			if (end.y <= sky || center.y < move_ey)return false;
+		}
+		else if (move_ey > move_sy)
+		{
+			start.y += my_speed;
+			set_edges();
+			if (start.y >= ground || center.y > move_ey)return false;
+		}
+		else return false;
+	}
+	else
+	{
+		if (move_ex < move_sx)
+		{
+			start.x -= my_speed;
+			start.y = start.x * slope + intercept;
+			set_edges();
+			if (end.x <= 0 || start.x >= scr_width || end.y <= sky || start.y >= ground || center.x < move_ex)return false;
+		}
+		else if (move_ex > move_sx)
+		{
+			start.x += my_speed;
+			start.y = start.x * slope + intercept;
+			set_edges();
+			if (end.x <= 0 || start.x >= scr_width || end.y <= sky || start.y >= ground || center.x > move_ex)return false;
+		}
+		else return false;
+	}
+
+	return true;
 }
 
 void dll::HERO::Release()

@@ -22,8 +22,8 @@ constexpr int ERR_INDEX{ 5002 };
 constexpr int ERR_PARAM{ 5003 };
 constexpr int ERR_UNK{ 5004 };
 
-constexpr int FIELD_ROWS{ 15 };
-constexpr int FIELD_COLS{ 19 };
+constexpr int FIELD_ROWS{ 14 };
+constexpr int FIELD_COLS{ 20 };
 
 enum class dirs { up = 0, down = 1, left = 2, right = 3, stop = 4 };
 
@@ -590,6 +590,8 @@ namespace dll
 		action get_action()const;
 		void set_action(action new_action);
 		void Release()override;
+
+		bool move(float gear)override;
 
 		static HERO* create(float sx, float sy);
 	};
