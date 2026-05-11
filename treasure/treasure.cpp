@@ -632,21 +632,53 @@ bool dll::HERO::move(float gear)
 	if (get_target_x() < center.x)dir = dirs::left;
 	else dir = dirs::right;
 
+	if (hor_dir || hor_dir)my_speed = _speed / 2.0f + gear / 10.0f;
+
 	if (hor_dir)
 	{
 		if (move_ex < move_sx)
 		{
 			start.x -= my_speed;
 			set_edges();
-			if (end.x <= 0 || center.x < move_ex)return false;
+			if (start.x <= 0 || center.x < move_ex)
+			{
+				if (start.x < 0)
+				{
+					start.x = 0;
+					set_edges();
+				}
+				return false;
+			}
 		}
 		else if (move_ex > move_sx)
 		{
 			start.x += my_speed;
 			set_edges();
-			if (start.x >= scr_width || center.x > move_ex)return false;
+			if (end.x >= scr_width || center.x > move_ex)
+			{
+				if (end.x > scr_width)
+				{
+					start.x = end.x - _width;
+					set_edges();
+				}
+				return false;
+			}
 		}
-		else return false;
+		else
+		{
+			if (start.x < 0)
+			{
+				start.x = 0;
+				set_edges();
+			}
+			else if (end.x > scr_width)
+			{
+				start.x = end.x - _width;
+				set_edges();
+			}
+			
+			return false;
+		}
 	}
 	else if (ver_dir)
 	{
@@ -654,15 +686,45 @@ bool dll::HERO::move(float gear)
 		{
 			start.y -= my_speed;
 			set_edges();
-			if (end.y <= sky || center.y < move_ey)return false;
+			if (end.y <= sky || center.y < move_ey)
+			{
+				if (start.y < sky)
+				{
+					start.y = sky;
+					set_edges();
+				}
+				
+				return false;
+			}
 		}
 		else if (move_ey > move_sy)
 		{
 			start.y += my_speed;
 			set_edges();
-			if (start.y >= ground || center.y > move_ey)return false;
+			if (start.y >= ground || center.y > move_ey)
+			{
+				if (end.y > ground)
+				{
+					start.y = end.y - _height;
+					set_edges();
+				}
+				return false;
+			}
 		}
-		else return false;
+		else
+		{
+			if (start.y < sky)
+			{
+				start.y = sky;
+				set_edges();
+			}
+			else if (end.y > ground)
+			{
+				start.y = end.y - _height;
+				set_edges();
+			}
+			return false;
+		}
 	}
 	else
 	{
@@ -671,7 +733,30 @@ bool dll::HERO::move(float gear)
 			start.x -= my_speed;
 			start.y = start.x * slope + intercept;
 			set_edges();
-			if (end.x <= 0 || start.x >= scr_width || end.y <= sky || start.y >= ground || center.x < move_ex)return false;
+			if (end.x <= 0 || start.x >= scr_width || end.y <= sky || start.y >= ground || center.x < move_ex)
+			{
+				if (start.x < 0)
+				{
+					start.x = 0;
+					set_edges();
+				}
+				else if (end.x > scr_width)
+				{
+					start.x = end.x - _width;
+					set_edges();
+				}
+				else if (start.y < sky)
+				{
+					start.y = sky;
+					set_edges();
+				}
+				else if (end.y > ground)
+				{
+					start.y = end.y - _height;
+					set_edges();
+				}
+				return false;
+			}
 		}
 		else if (move_ex > move_sx)
 		{
