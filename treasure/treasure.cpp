@@ -884,6 +884,35 @@ void dll::Sort(BAG<FPOINT>& bag, FPOINT ref)
 		}
 	}
 }
+void dll::Sort(BAG<D2D1_RECT_F>& bag, FPOINT ref)
+{
+	if (bag.size() < 2)return;
+	else
+	{
+		bool ok = false;
+
+		while (!ok)
+		{
+			ok = true;
+
+			for (size_t i = 0; i < bag.size() - 1; ++i)
+			{
+				FPOINT former{ bag[i].left + (bag[i].right - bag[i].left) / 2.0f,
+					bag[i].top + (bag[i].bottom - bag[i].top) / 2.0f };
+				FPOINT latter{ bag[i+1].left + (bag[i + 1].right - bag[i + 1].left) / 2.0f,
+					bag[i + 1].top + (bag[i + 1].bottom - bag[i + 1].top) / 2.0f };
+
+				if (Distance(former, ref) > Distance(latter, ref))
+				{
+					D2D1_RECT_F temp{ bag[i] };
+					bag[i] = bag[i + 1];
+					bag[i + 1] = temp;
+					ok = false;
+				}
+			}
+		}
+	}
+}
 
 action dll::AIMove(EVIL& unit, BAG<D2D1_RECT_F>& obstacles, BAG<FPOINT>& assets, FPOINT hero_center)
 {

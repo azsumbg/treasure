@@ -604,6 +604,7 @@ namespace dll
 	TREASURE_API bool Intersect(FPOINT first_center, FPOINT second_center, float first_xrad, float second_xrad,
 		float first_yrad, float second_yrad);
 	TREASURE_API void Sort(BAG<FPOINT>& bag, FPOINT ref);
+	TREASURE_API void Sort(BAG<D2D1_RECT_F>& bag, FPOINT ref);
 
 	TREASURE_API action AIMove(EVIL& unit, BAG<D2D1_RECT_F>& obstacles, BAG<FPOINT>& assets, FPOINT hero_center);
 }
