@@ -44,16 +44,16 @@ struct TREASURE_API FADE
 
 	FPOINT position{};
 
-	int delay{ 80 };
+	int delay{ 20 };
 
-	float opacity = 1.0f;
-
+	float opacity{ 1.0f };
+	
 	float get_opacity()
 	{
 		--delay;
-		if (delay == 0)
+		if (delay <= 0)
 		{
-			delay = 80;
+			delay = 20;
 			opacity -= 0.1f;
 		}
 		return opacity;
@@ -471,6 +471,8 @@ namespace dll
 		D2D1_RECT_F get_tile_rect(int row, int col)const;
 	
 		bool is_water_tile(int row, int col)const;
+
+		void set_tile(int row, int col, bool water);
 	};
 
 	class TREASURE_API NATURE :public PROTON
@@ -557,13 +559,18 @@ namespace dll
 
 		float view_range{ 0 };
 
+		int max_lifes = 0;
+
 		EVIL(moveables _who, float _sx, float _sy, float _ex, float _ey);
 
 	public:
 		action current_action{ action::walk };
-		
+		int armor = 1;
+
 		int get_frame() override;
 		int attack() override;
+
+		int get_max_lifes()const;
 
 		void Release() override;
 

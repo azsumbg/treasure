@@ -227,7 +227,7 @@ dll::FIELD::FIELD()
 	{
 		for (int col = 0; col < FIELD_COLS - 3; ++col)
 		{
-			if (_rand(0, 90) == 2)
+			if (_rand(0, 200) == 2)
 			{
 				FieldArray[row][col].is_water = true;
 				FieldArray[row][col + 1].is_water = true;
@@ -249,6 +249,12 @@ D2D1_RECT_F dll::FIELD::get_tile_rect(int row, int col)const
 bool dll::FIELD::is_water_tile(int row, int col)const
 {
 	return FieldArray[row][col].is_water;
+}
+
+void dll::FIELD::set_tile(int row, int col, bool water)
+{
+	if (water)FieldArray[row][col].is_water = true;
+	else FieldArray[row][col].is_water = false;
 }
 
 ///////////////////////////////////////////
@@ -323,7 +329,6 @@ dll::ACTION::ACTION(moveables _who, float _x, float _y) :PROTON(_x, _y)
 		max_frames = 10;
 		frame_delay = 6;
 		damage = 5;
-		max_attack_delay = 80;
 		lifes = 100;
 		break;
 
@@ -333,7 +338,6 @@ dll::ACTION::ACTION(moveables _who, float _x, float _y) :PROTON(_x, _y)
 		max_frames = 25;
 		frame_delay = 3;
 		damage = 9;
-		max_attack_delay = 100;
 		lifes = 110;
 		break;
 
@@ -343,7 +347,6 @@ dll::ACTION::ACTION(moveables _who, float _x, float _y) :PROTON(_x, _y)
 		max_frames = 119;
 		frame_delay = 1;
 		damage = 6;
-		max_attack_delay = 105;
 		lifes = 90;
 		break;
 
@@ -353,7 +356,6 @@ dll::ACTION::ACTION(moveables _who, float _x, float _y) :PROTON(_x, _y)
 		max_frames = 3;
 		frame_delay = 22;
 		damage = 10;
-		max_attack_delay = 120;
 		lifes = 150;
 		break;
 
@@ -367,7 +369,6 @@ dll::ACTION::ACTION(moveables _who, float _x, float _y) :PROTON(_x, _y)
 		break;
 	}
 
-	max_attack_delay = attack_delay;
 	max_frame_delay = frame_delay;
 }
 
@@ -512,23 +513,30 @@ dll::EVIL::EVIL(moveables _who, float _sx, float _sy, float _ex, float _ey) :ACT
 	{
 	case moveables::flyer:
 		view_range = 250.0f;
+		attack_delay = 120;
 		break;
 
 	case moveables::girl:
 		view_range = 150.0f;
+		attack_delay = 140;
 		break;
 
 	case moveables::soul:
+		attack_delay = 110;
 		view_range = 200.0f;
 		break;
 
 	case moveables::zombie:
+		attack_delay = 150;
 		view_range = 180.0f;
 		break;
 	}
 
 	if (move_ex > move_sx)dir = dirs::right;
 	else dir = dirs::left;
+
+	max_attack_delay = attack_delay;
+	max_lifes = lifes;
 }
 
 int dll::EVIL::get_frame()
@@ -554,6 +562,12 @@ int dll::EVIL::attack()
 
 	return 0;
 }
+
+int dll::EVIL::get_max_lifes()const
+{
+	return max_lifes;
+}
+
 void dll::EVIL::Release()
 {
 	delete this;
@@ -917,7 +931,7 @@ void dll::Sort(BAG<D2D1_RECT_F>& bag, FPOINT ref)
 action dll::AIMove(EVIL& unit, BAG<D2D1_RECT_F>& obstacles, BAG<FPOINT>& assets, FPOINT hero_center)
 {
 	action ret = unit.current_action;
-	
+
 	if (!assets.empty())Sort(assets, unit.center);
 
 	if (!obstacles.empty())
@@ -953,7 +967,7 @@ action dll::AIMove(EVIL& unit, BAG<D2D1_RECT_F>& obstacles, BAG<FPOINT>& assets,
 				//LEFT / RIGHT BUMP
 				else if (unit.start.x >= obstacles[i].left && unit.start.x <= obstacles[i].right)
 				{
-					
+
 					if (unit.start.y >= obstacles[i].top && unit.start.y < obstacles[i].bottom &&
 						unit.end.y > obstacles[i].top && unit.end.y <= obstacles[i].bottom)is_bumped = left;
 					else
@@ -977,6 +991,9 @@ action dll::AIMove(EVIL& unit, BAG<D2D1_RECT_F>& obstacles, BAG<FPOINT>& assets,
 				}
 
 				unit.current_action = action::bumped;
+
+				ret = action::bumped;
+
 				break;
 			}
 		}
@@ -989,10 +1006,13 @@ action dll::AIMove(EVIL& unit, BAG<D2D1_RECT_F>& obstacles, BAG<FPOINT>& assets,
 			else if (is_bumped == up || is_bumped == down)unit.set_path(dest_x, unit.center.y);
 		}
 	}
-	
+
 	if (ret != action::bumped)
 	{
-		if (Intersect(unit.center, hero_center, unit.x_rad, 40.0f, unit.y_rad, 40.0f))ret = action::shoot;
+		if (unit.type != moveables::soul && unit.type != moveables::flyer &&
+			Intersect(unit.center, hero_center, unit.x_rad, 40.0f, unit.y_rad, 40.0f))ret = action::shoot;
+		else if ((unit.type == moveables::soul || unit.type == moveables::flyer)
+			&& Distance(unit.center, hero_center) <= unit.view_range)ret = action::shoot;
 		else if (Distance(unit.center, hero_center) <= unit.view_range)
 		{
 			unit.set_path(hero_center.x, hero_center.y);
